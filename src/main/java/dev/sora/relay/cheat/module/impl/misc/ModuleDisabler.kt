@@ -5,7 +5,6 @@ import dev.sora.relay.cheat.module.CheatModule
 import dev.sora.relay.cheat.value.Choice
 import dev.sora.relay.game.event.EventPacketOutbound
 import dev.sora.relay.game.event.EventTick
-import org.cloudburstmc.math.vector.Vector2f
 import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket
 import org.cloudburstmc.protocol.bedrock.packet.NetworkStackLatencyPacket
 import org.cloudburstmc.protocol.bedrock.packet.PlayerAuthInputPacket
@@ -36,18 +35,12 @@ class ModuleDisabler : CheatModule("Disabler", CheatCategory.MISC) {
 			if (packet is PlayerAuthInputPacket) {
 				packet.delta = packet.delta.mul(0.0,1.0,0.0);
 
-				session.sendPacket(MovePlayerPacket().apply {
-					runtimeEntityId = session.player.runtimeEntityId
-					isOnGround = true
-					mode = MovePlayerPacket.Mode.TELEPORT
-					teleportationCause = MovePlayerPacket.TeleportationCause.PROJECTILE
-					tick = session.player.tickExists
-				})
 				/*
 				for (i in 0 until 9) {
 					session.netSession.outboundPacket(packet)
 				}
 				 */
+
 			} else if (packet is NetworkStackLatencyPacket) {
 				cancel()
 			}
@@ -55,11 +48,10 @@ class ModuleDisabler : CheatModule("Disabler", CheatCategory.MISC) {
 
 		private val handleTick = handle<EventTick> {
 			session.sendPacket(MovePlayerPacket().apply {
-				val player = session.player
-				runtimeEntityId = player.runtimeEntityId
-				position = player.vec3Position
-				rotation = player.vec3Rotation
+				runtimeEntityId = session.player.runtimeEntityId
 				isOnGround = true
+				mode = MovePlayerPacket.Mode.TELEPORT
+				teleportationCause = MovePlayerPacket.TeleportationCause.PROJECTILE
 				tick = session.player.tickExists
 			})
 		}
