@@ -7,6 +7,7 @@ import dev.sora.relay.game.event.EventPacketOutbound
 import dev.sora.relay.game.utils.constants.DeviceOS
 import dev.sora.relay.utils.jwtPayload
 import dev.sora.relay.utils.toHexString
+import org.cloudburstmc.protocol.bedrock.data.InputInteractionModel
 import org.cloudburstmc.protocol.bedrock.data.InputMode
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket
 import org.cloudburstmc.protocol.bedrock.packet.PlayerAuthInputPacket
@@ -34,6 +35,9 @@ class ModuleDeviceSpoof : CheatModule("DeviceSpoof", CheatCategory.MISC) {
 			packet.extra = "." + Base64.getEncoder().withoutPadding().encodeToString(AbstractConfigManager.DEFAULT_GSON.toJson(body).toByteArray(Charsets.UTF_8)) + "."
 		} else if (platformValue && packet is PlayerAuthInputPacket) {
 			packet.inputMode = InputMode.TOUCH
+			if(packet.inputInteractionModel == InputInteractionModel.CROSSHAIR){
+				packet.inputInteractionModel = InputInteractionModel.TOUCH
+			}
 		}
 	}
 }
